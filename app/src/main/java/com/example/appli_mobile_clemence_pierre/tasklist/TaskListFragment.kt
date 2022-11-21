@@ -26,7 +26,8 @@ class TaskListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        adapter.currentList = taskList
+//        adapter.currentList = taskList
+        adapter.submitList(taskList)
         return inflater.inflate(R.layout.fragment_task_list, container, false)
     }
 
@@ -38,9 +39,9 @@ class TaskListFragment : Fragment() {
         floatingActionButton.setOnClickListener {
             val newTask = Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}")
             taskList += newTask
-            adapter.currentList = taskList
+//            adapter.currentList = taskList
+            adapter.submitList(taskList)
             adapter.notifyItemChanged(taskList.size)
-//            adapter.notifyDataSetChanged()
         }
     }
 }
