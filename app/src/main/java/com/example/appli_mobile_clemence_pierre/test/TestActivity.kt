@@ -33,6 +33,7 @@ import com.alexstyl.swipeablecard.ExperimentalSwipeableCardApi
 import com.alexstyl.swipeablecard.rememberSwipeableCardState
 import com.alexstyl.swipeablecard.swipableCard
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 class TestActivity : ComponentActivity() {
     @OptIn(ExperimentalSwipeableCardApi::class)
@@ -41,7 +42,7 @@ class TestActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             MaterialTheme() {
-                TransparentSystemBars()
+//                TransparentSystemBars()
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -73,6 +74,13 @@ class TestActivity : ComponentActivity() {
                                 .align(Alignment.Center)
                         ) {
                             states.forEach { (matchProfile, state) ->
+                                if (abs(state.offset.value.x) > 0.1) {
+                                    if (state.offset.value.x > 0) {
+                                        Log.d("TEST", "Swiping right");
+                                    } else {
+                                        Log.d("TEST", "Swiping left");
+                                    }
+                                }
                                 if (state.swipedDirection == null) {
                                     ProfileCard(
                                         modifier = Modifier
@@ -202,11 +210,6 @@ class TestActivity : ComponentActivity() {
                 textAlign = TextAlign.Center
             )
         }
-    }
-
-    @Composable
-    private fun TransparentSystemBars() {
-        val useDarkIcons = false
     }
 
     private fun stringFrom(direction: Direction): String {
