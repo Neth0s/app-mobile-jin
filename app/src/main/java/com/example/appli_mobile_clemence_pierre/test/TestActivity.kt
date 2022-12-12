@@ -31,6 +31,7 @@ import com.alexstyl.swipeablecard.*
 import kotlinx.coroutines.launch
 
 
+// From : https://github.com/alexstyl/compose-tinder-card
 class TestActivity : ComponentActivity() {
     @OptIn(ExperimentalSwipeableCardApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
