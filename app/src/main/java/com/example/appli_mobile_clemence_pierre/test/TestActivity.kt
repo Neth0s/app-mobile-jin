@@ -1,7 +1,6 @@
 package com.example.appli_mobile_clemence_pierre.test
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -17,32 +16,41 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
-import com.alexstyl.swipeablecard.Direction
-import com.alexstyl.swipeablecard.ExperimentalSwipeableCardApi
-import com.alexstyl.swipeablecard.rememberSwipeableCardState
-import com.alexstyl.swipeablecard.swipableCard
+import com.alexstyl.swipeablecard.*
 import kotlinx.coroutines.launch
-import kotlin.math.abs
+
 
 class TestActivity : ComponentActivity() {
     @OptIn(ExperimentalSwipeableCardApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+//        val displayMetrics = DisplayMetrics()
+//        windowManager.defaultDisplay.getMetrics(displayMetrics)
+//        val height = displayMetrics.heightPixels
+//        val width = displayMetrics.widthPixels
+
+//        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
+            val screenWidth =
+                with(LocalDensity.current) {
+                    LocalConfiguration.current.screenWidthDp.dp.toPx()
+                }
+            val screenHeight =
+                with(LocalDensity.current) {
+                    LocalConfiguration.current.screenHeightDp.dp.toPx()
+                }
             MaterialTheme() {
-//                TransparentSystemBars()
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -57,8 +65,15 @@ class TestActivity : ComponentActivity() {
                         .systemBarsPadding()
                 ) {
                     Box {
-                        val states = profiles.reversed()
-                            .map { it to rememberSwipeableCardState() }
+                        var states by remember {
+                            mutableStateOf(profiles.map {
+                                it to SwipeableCardState(
+                                    screenWidth,
+                                    screenHeight
+                                )
+                            })
+                        }
+
                         var hint by remember {
                             mutableStateOf("Swipe a card or press a button below")
                         }
@@ -74,38 +89,47 @@ class TestActivity : ComponentActivity() {
                                 .align(Alignment.Center)
                         ) {
                             states.forEach { (matchProfile, state) ->
-                                if (abs(state.offset.value.x) > 0.1) {
-                                    if (state.offset.value.x > 0) {
-                                        Log.d("TEST", "Swiping right");
-                                    } else {
-                                        Log.d("TEST", "Swiping left");
-                                    }
-                                }
-                                if (state.swipedDirection == null) {
-                                    ProfileCard(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .swipableCard(
-                                                state = state,
-                                                blockedDirections = listOf(Direction.Down),
-                                                onSwiped = {
-                                                    // swipes are handled by the LaunchedEffect
-                                                    // so that we track button clicks & swipes
-                                                    // from the same place
-                                                },
-                                                onSwipeCancel = {
-                                                    Log.d("Swipeable-Card", "Cancelled swipe")
-                                                    hint = "You canceled the swipe"
-                                                }
+//                                if (state.swipedDirection == null) {
+//                                    if (abs(state.offset.value.x) > 10) {
+//                                        if (state.offset.value.x > 0) {
+//                                            // Card is right
+////                                            Log.d("TEST", "Swiping right: ${matchProfile.name}")
+//                                        } else {
+//                                            // Card is left
+////                                            Log.d("TEST", "Swiping left: ${matchProfile.name}")
+//                                        }
+//                                    }
+                                ProfileCard(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .swipableCard(
+                                            state = state,
+                                            blockedDirections = listOf(
+                                                com.alexstyl.swipeablecard.Direction.Up,
+                                                com.alexstyl.swipeablecard.Direction.Down
                                             ),
-                                        matchProfile = matchProfile
-                                    )
-                                }
-                                LaunchedEffect(matchProfile, state.swipedDirection) {
-                                    if (state.swipedDirection != null) {
-                                        hint = "You swiped ${stringFrom(state.swipedDirection!!)}"
-                                    }
-                                }
+                                            onSwiped = {
+                                                val a = profiles[0] to SwipeableCardState(
+                                                    screenWidth,
+                                                    screenHeight
+                                                )
+                                                states = states - (matchProfile to state)
+                                                states = listOf(a) + states;
+                                                hint =
+                                                    "You swiped ${stringFrom(state.swipedDirection!!)}"
+                                            },
+                                            onSwipeCancel = {
+                                                hint = "You canceled the swipe"
+                                            }
+                                        ),
+                                    matchProfile = matchProfile
+                                )
+//                                }
+//                                LaunchedEffect(matchProfile, state.swipedDirection) {
+//                                    if (state.swipedDirection != null) {
+//                                        hint = "You swiped ${stringFrom(state.swipedDirection!!)}"
+//                                    }
+//                                }
                             }
                         }
                         Row(
@@ -118,11 +142,15 @@ class TestActivity : ComponentActivity() {
                             CircleButton(
                                 onClick = {
                                     scope.launch {
-                                        val last = states.reversed()
-                                            .firstOrNull {
-                                                it.second.offset.value == Offset(0f, 0f)
-                                            }?.second
-                                        last?.swipe(Direction.Left)
+                                        val pair = states.last()
+
+                                        pair.second.swipe(com.alexstyl.swipeablecard.Direction.Left)
+                                        val a = profiles[0] to SwipeableCardState(
+                                            screenWidth,
+                                            screenHeight
+                                        )
+                                        states = states - pair
+                                        states = listOf(a) + states
                                     }
                                 },
                                 icon = Icons.Rounded.Close
@@ -130,12 +158,15 @@ class TestActivity : ComponentActivity() {
                             CircleButton(
                                 onClick = {
                                     scope.launch {
-                                        val last = states.reversed()
-                                            .firstOrNull {
-                                                it.second.offset.value == Offset(0f, 0f)
-                                            }?.second
+                                        val pair = states.last()
 
-                                        last?.swipe(Direction.Right)
+                                        pair.second.swipe(com.alexstyl.swipeablecard.Direction.Right)
+                                        val a = profiles[0] to SwipeableCardState(
+                                            screenWidth,
+                                            screenHeight
+                                        )
+                                        states = states - pair
+                                        states = listOf(a) + states
                                     }
                                 },
                                 icon = Icons.Rounded.Favorite
@@ -212,12 +243,12 @@ class TestActivity : ComponentActivity() {
         }
     }
 
-    private fun stringFrom(direction: Direction): String {
+    private fun stringFrom(direction: com.alexstyl.swipeablecard.Direction): String {
         return when (direction) {
-            Direction.Left -> "Left 👈"
-            Direction.Right -> "Right 👉"
-            Direction.Up -> "Up 👆"
-            Direction.Down -> "Down 👇"
+            com.alexstyl.swipeablecard.Direction.Left -> "Left 👈"
+            com.alexstyl.swipeablecard.Direction.Right -> "Right 👉"
+            com.alexstyl.swipeablecard.Direction.Up -> "Up 👆"
+            com.alexstyl.swipeablecard.Direction.Down -> "Down 👇"
         }
     }
 }
@@ -231,3 +262,5 @@ fun Scrim(modifier: Modifier = Modifier) {
             .fillMaxWidth()
     )
 }
+
+
