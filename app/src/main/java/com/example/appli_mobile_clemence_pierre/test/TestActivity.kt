@@ -5,263 +5,154 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alexstyl.swipeablecard.*
-import kotlinx.coroutines.launch
+import com.example.appli_mobile_clemence_pierre.R
 
+class HalfSizeShape(val widthPart: Float) : Shape {
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density
+    ): Outline = Outline.Generic(Path().apply {
+        addRect(Rect(Offset.Zero, Size(size.width * widthPart, size.height)))
+    })
+}
+
+@Composable
+fun Filler(
+    name: String,
+    fillValue: Float, // Between 0 - 1
+    hintValue: Float, // Between 0 - 1
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box() {
+            Image(
+                modifier = Modifier.size(100.dp),
+                painter = painterResource(R.drawable.church),
+                contentDescription = "Church",
+                colorFilter = ColorFilter.tint(Color.Yellow),
+                alpha = 0.2f
+            )
+            Image(
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(HalfSizeShape(hintValue)),
+                painter = painterResource(R.drawable.church),
+                contentDescription = "Church",
+                colorFilter = ColorFilter.tint(Color.Gray),
+                alpha = 0.6f
+            )
+            Image(
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(HalfSizeShape(fillValue)),
+                painter = painterResource(R.drawable.church),
+                contentDescription = "Church",
+                colorFilter = ColorFilter.tint(Color.Red),
+                alpha = 1f
+            )
+        }
+        Text(text = name, color = Color.Red)
+    }
+}
 
 // From : https://github.com/alexstyl/compose-tinder-card
 class TestActivity : ComponentActivity() {
-    @OptIn(ExperimentalSwipeableCardApi::class)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        val displayMetrics = DisplayMetrics()
-//        windowManager.defaultDisplay.getMetrics(displayMetrics)
-//        val height = displayMetrics.heightPixels
-//        val width = displayMetrics.widthPixels
 
-//        WindowCompat.setDecorFitsSystemWindows(window, false)
+    val profiles = mutableStateListOf(
+        MatchProfile(name = "Erlich Bachman", image = R.drawable.ic_launcher_background),
+        MatchProfile(name = "Richard Hendricks", image = R.drawable.ic_launcher_background),
+        MatchProfile(name = "Laurie Bream", image = R.drawable.ic_launcher_background),
+    )
+
+    var religion1 = 0.4f
+    var religion2 = 0.6f
+
+    var hint by mutableStateOf("Swipe a card or press a button below")
+
+    @OptIn(ExperimentalMaterialApi::class)
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+        super.onCreate(savedInstanceState)
         setContent {
-            val screenWidth =
-                with(LocalDensity.current) {
-                    LocalConfiguration.current.screenWidthDp.dp.toPx()
-                }
-            val screenHeight =
-                with(LocalDensity.current) {
-                    LocalConfiguration.current.screenHeightDp.dp.toPx()
-                }
             MaterialTheme() {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(
-                            Brush.verticalGradient(
-                                listOf(
-                                    Color(0xfff68084),
-                                    Color(0xffa6c0fe),
-                                )
-                            )
-                        )
-                        .systemBarsPadding()
+                        .background(Color.Black)
                 ) {
-                    Box {
-                        var states by remember {
-                            mutableStateOf(profiles.map {
-                                it to SwipeableCardState(
-                                    screenWidth,
-                                    screenHeight
-                                )
-                            })
-                        }
+                    Column(
+                        Modifier
+                            .padding(10.dp)
+                            .align(Alignment.TopCenter)
+                    ) {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = hint,
+                            color = MaterialTheme.colors.onPrimary,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 22.sp,
+                            textAlign = TextAlign.Center
+                        )
 
-                        var hint by remember {
-                            mutableStateOf("Swipe a card or press a button below")
-                        }
-
-                        Hint(hint)
-
-                        val scope = rememberCoroutineScope()
-                        Box(
-                            Modifier
-                                .padding(24.dp)
-                                .fillMaxSize()
-                                .aspectRatio(1f)
-                                .align(Alignment.Center)
-                        ) {
-                            states.forEach { (matchProfile, state) ->
-//                                if (state.swipedDirection == null) {
-//                                    if (abs(state.offset.value.x) > 10) {
-//                                        if (state.offset.value.x > 0) {
-//                                            // Card is right
-////                                            Log.d("TEST", "Swiping right: ${matchProfile.name}")
-//                                        } else {
-//                                            // Card is left
-////                                            Log.d("TEST", "Swiping left: ${matchProfile.name}")
-//                                        }
-//                                    }
-                                ProfileCard(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .swipableCard(
-                                            state = state,
-                                            blockedDirections = listOf(
-                                                com.alexstyl.swipeablecard.Direction.Up,
-                                                com.alexstyl.swipeablecard.Direction.Down
-                                            ),
-                                            onSwiped = {
-                                                val a = profiles[0] to SwipeableCardState(
-                                                    screenWidth,
-                                                    screenHeight
-                                                )
-                                                states = states - (matchProfile to state)
-                                                states = listOf(a) + states;
-                                                hint =
-                                                    "You swiped ${stringFrom(state.swipedDirection!!)}"
-                                            },
-                                            onSwipeCancel = {
-                                                hint = "You canceled the swipe"
-                                            }
-                                        ),
-                                    matchProfile = matchProfile
-                                )
-//                                }
-//                                LaunchedEffect(matchProfile, state.swipedDirection) {
-//                                    if (state.swipedDirection != null) {
-//                                        hint = "You swiped ${stringFrom(state.swipedDirection!!)}"
-//                                    }
-//                                }
-                            }
-                        }
                         Row(
-                            Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(horizontal = 24.dp, vertical = 32.dp)
-                                .fillMaxWidth(),
+                            Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            CircleButton(
-                                onClick = {
-                                    scope.launch {
-                                        val pair = states.last()
+                            Filler(name = "Test1", fillValue = 0.6f, hintValue = 0.7f)
 
-                                        pair.second.swipe(com.alexstyl.swipeablecard.Direction.Left)
-                                        val a = profiles[0] to SwipeableCardState(
-                                            screenWidth,
-                                            screenHeight
-                                        )
-                                        states = states - pair
-                                        states = listOf(a) + states
-                                    }
-                                },
-                                icon = Icons.Rounded.Close
-                            )
-                            CircleButton(
-                                onClick = {
-                                    scope.launch {
-                                        val pair = states.last()
+                            Filler(name = "Test2", fillValue = 0.1f, hintValue = 0.2f)
 
-                                        pair.second.swipe(com.alexstyl.swipeablecard.Direction.Right)
-                                        val a = profiles[0] to SwipeableCardState(
-                                            screenWidth,
-                                            screenHeight
-                                        )
-                                        states = states - pair
-                                        states = listOf(a) + states
-                                    }
-                                },
-                                icon = Icons.Rounded.Favorite
-                            )
+                            Filler(name = "Test3", fillValue = 0.1f, hintValue = 0.2f)
+
+                            Filler(name = "Test4", fillValue = 0.1f, hintValue = 0.2f)
                         }
                     }
+
+                    profiles
+                        .filter { !it.swiped }
+                        .forEach { profile ->
+                            key(profile) {
+                                ProfileCard(
+                                    modifier = Modifier
+                                        .padding(24.dp)
+                                        .aspectRatio(1f)
+                                        .align(Alignment.Center)
+                                        .swipeableCard(
+                                            state = rememberSwipeableCardState(),
+                                            onDrag = { hint = "Offsetx = ${it.x}" },
+                                            onSwiped = {
+                                                profiles.add(0, profile.copy(swiped = false))
+                                                hint =
+                                                    "$profile  ➡" + if (it == Direction.Right) "YAY" else "NAY"
+                                                profile.swiped = true
+                                            },
+                                            onSwipeCancel = { hint = "You canceled the swipe" }
+                                        ),
+                                    matchProfile = profile
+                                )
+                            }
+                        }
                 }
             }
         }
     }
-
-    @Composable
-    private fun CircleButton(
-        onClick: () -> Unit,
-        icon: ImageVector,
-    ) {
-        IconButton(
-            modifier = Modifier
-                .clip(CircleShape)
-                .background(MaterialTheme.colors.primary)
-                .size(56.dp)
-                .border(2.dp, MaterialTheme.colors.primary, CircleShape),
-            onClick = onClick
-        ) {
-            Icon(
-                icon, null,
-                tint = MaterialTheme.colors.onPrimary
-            )
-        }
-    }
-
-    @Composable
-    private fun ProfileCard(
-        modifier: Modifier,
-        matchProfile: MatchProfile,
-    ) {
-        Card(modifier) {
-            Box {
-                Image(
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(matchProfile.drawableResId),
-                    contentDescription = null
-                )
-                Scrim(Modifier.align(Alignment.BottomCenter))
-                Column(Modifier.align(Alignment.BottomStart)) {
-                    Text(
-                        text = matchProfile.name,
-                        color = MaterialTheme.colors.onPrimary,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
-            }
-        }
-    }
-
-    @Composable
-    private fun Hint(text: String) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .padding(horizontal = 24.dp, vertical = 32.dp)
-                .fillMaxWidth()
-        ) {
-            Text(
-                text = text,
-                color = MaterialTheme.colors.onPrimary,
-                fontWeight = FontWeight.Bold,
-                fontSize = 22.sp,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-
-    private fun stringFrom(direction: com.alexstyl.swipeablecard.Direction): String {
-        return when (direction) {
-            com.alexstyl.swipeablecard.Direction.Left -> "Left 👈"
-            com.alexstyl.swipeablecard.Direction.Right -> "Right 👉"
-            com.alexstyl.swipeablecard.Direction.Up -> "Up 👆"
-            com.alexstyl.swipeablecard.Direction.Down -> "Down 👇"
-        }
-    }
 }
-
-@Composable
-fun Scrim(modifier: Modifier = Modifier) {
-    Box(
-        modifier
-            .background(Brush.verticalGradient(listOf(Color.Transparent, Color.Black)))
-            .height(180.dp)
-            .fillMaxWidth()
-    )
-}
-
-
