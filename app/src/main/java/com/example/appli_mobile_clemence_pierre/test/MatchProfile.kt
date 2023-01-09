@@ -18,10 +18,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-data class MatchProfile(
+// All values are between 0 - 1
+data class EventModifier(
+    val moneyYes: Float,
+    val popularityYes: Float,
+    val mentalYes: Float,
+    val moneyNo: Float,
+    val popularityNo: Float,
+    val mentalNo: Float,
+)
+
+data
+
+class MatchProfile(
     var swiped: Boolean = false,
     val name: String,
     @DrawableRes val image: Int,
+    val modifier: EventModifier,
 )
 
 @Composable
