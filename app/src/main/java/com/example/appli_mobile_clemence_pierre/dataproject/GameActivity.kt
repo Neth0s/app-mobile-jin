@@ -1,4 +1,4 @@
-package com.example.appli_mobile_clemence_pierre.test
+package com.example.appli_mobile_clemence_pierre.dataproject
 
 import android.os.Bundle
 import android.util.Log
@@ -32,16 +32,18 @@ import com.alexstyl.swipeablecard.Direction
 import com.alexstyl.swipeablecard.ExperimentalSwipeableCardApi
 import com.alexstyl.swipeablecard.rememberSwipeableCardState
 import com.alexstyl.swipeablecard.swipableCard
+import com.example.appli_mobile_clemence_pierre.test.MatchProfile
+import com.example.appli_mobile_clemence_pierre.test.profiles
 import kotlinx.coroutines.launch
 
-class TestActivity : ComponentActivity() {
+class GameActivity : ComponentActivity() {
     @OptIn(ExperimentalSwipeableCardApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             MaterialTheme() {
-                TransparentSystemBars()
+                /*TransparentSystemBars()*/
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -56,7 +58,8 @@ class TestActivity : ComponentActivity() {
                         .systemBarsPadding()
                 ) {
                     Box {
-                        val states = profiles.map { it to rememberSwipeableCardState() }
+                        val states = profiles.reversed()
+                            .map { it to rememberSwipeableCardState() }
                         var hint by remember {
                             mutableStateOf("Swipe a card or press a button below")
                         }
@@ -91,12 +94,12 @@ class TestActivity : ComponentActivity() {
                                             ),
                                         matchProfile = matchProfile
                                     )
-                                }
+                                }/*
                                 LaunchedEffect(matchProfile, state.swipedDirection) {
                                     if (state.swipedDirection != null) {
                                         hint = "You swiped ${stringFrom(state.swipedDirection!!)}"
                                     }
-                                }
+                                }*/
                             }
                         }
                         Row(

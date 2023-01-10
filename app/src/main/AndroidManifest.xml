@@ -40,7 +40,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".test.TestActivity"
+            android:name=".dataproject.GameActivity"
             android:exported="true">>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
