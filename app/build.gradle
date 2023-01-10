@@ -87,5 +87,5 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
 
-    implementation 'com.alexstyl.swipeablecard:swipeablecard:0.1.0'
+//    implementation 'com.alexstyl.swipeablecard:swipeablecard:0.1.0'
 }
