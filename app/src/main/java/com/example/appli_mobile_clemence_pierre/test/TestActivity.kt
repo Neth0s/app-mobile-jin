@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.appli_mobile_clemence_pierre.R
+import com.example.myapplication.AsyncBitmapDL
 import kotlin.math.abs
 
 class HalfSizeShape(private val widthPart: Float, private val offset: Float) : Shape {
@@ -95,20 +96,32 @@ fun Filler(
 class TestActivity : ComponentActivity() {
 
     private val profiles = mutableStateListOf(
-        MatchProfile(
+        Event(
             name = "Erlich Bachman",
-            image = R.drawable.ic_launcher_background,
-            modifier = EventModifier(0.1f, 0f, 0.2f, -0.1f, 0.05f, -0.05f)
+            faceUrl = "https://api.dicebear.com/5.x/avataaars/png?seed=ErlichBachman&backgroundColor=d1d4f9",
+            description = "Vendre des calendriers associatifs",
+            modifier = EventModifier(0.1f, 0f, 0.2f, -0.1f, 0.05f, -0.05f),
+            image = null
         ),
-        MatchProfile(
-            name = "Richard Hendricks", image = R.drawable.ic_launcher_background,
-            modifier = EventModifier(-0.1f, 0.1f, 0f, 0.1f, 0.05f, -0.05f)
+        Event(
+            name = "Richard Hendricks",
+            faceUrl = "https://api.dicebear.com/5.x/avataaars/png?seed=RichardHendricks&backgroundColor=d1d4f9",
+            description = "Faire un stand au forum",
+            modifier = EventModifier(-0.1f, 0.1f, 0f, 0.1f, 0.05f, -0.05f),
+            image = null
         ),
-        MatchProfile(
-            name = "Laurie Bream", image = R.drawable.ic_launcher_background,
-            modifier = EventModifier(0f, -0.2f, 0.2f, -0.2f, -0.1f, 0f)
+        Event(
+            name = "Laurie Bream",
+            faceUrl = "https://api.dicebear.com/5.x/avataaars/png?seed=LaurieBream&backgroundColor=d1d4f9",
+            description = "Faire un prank aux listeux",
+            modifier = EventModifier(0f, -0.2f, 0.2f, -0.2f, -0.1f, 0f),
+            image = null
         ),
     )
+
+    //Downloading image
+    var abd: AsyncBitmapDL = AsyncBitmapDL(profiles[0])
+    abd.execute()
 
     private var money by mutableStateOf(0.5f)
     private var moneyHint by mutableStateOf(0f)
@@ -214,7 +227,7 @@ class TestActivity : ComponentActivity() {
                                                 mentalHint = 0f
                                             }
                                         ),
-                                    matchProfile = profile
+                                    event = profile
                                 )
                             }
                         }
