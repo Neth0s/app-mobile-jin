@@ -139,7 +139,7 @@ class TestActivity : ComponentActivity() {
         lifecycleScope.launch {
             profiles.forEach {
                 val bm: Bitmap? = withContext(Dispatchers.IO) {
-                    val a = Api.imageWebService.get_image(it.name)
+                    val a = Api.imageWebService.get_image(it.name) // in avatar_api.Api
                     val inStream: InputStream = BufferedInputStream(a.byteStream())
                     return@withContext BitmapFactory.decodeStream(inStream)
                 }
