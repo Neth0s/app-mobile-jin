@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.appli_mobile_clemence_pierre.test.ui.theme.ApplimobileclemencepierreTheme
 
@@ -51,7 +50,7 @@ class ListActivity : ComponentActivity() {
                         }
                     }
                     Column(modifier = Modifier.fillMaxSize()) {
-                        profiles
+                        baseProfiles
                             .filter { !it.swiped }
                             .forEach { profile ->
                                 key(profile) {
@@ -64,13 +63,8 @@ class ListActivity : ComponentActivity() {
                                             modifier = Modifier.fillMaxWidth(),
                                             horizontalArrangement = Arrangement.SpaceBetween
                                         ) {
-                                            Text(text = profile.name, textAlign = TextAlign.End)
-                                            Spacer(modifier = Modifier.size(10.dp))
                                             Text(
                                                 text = profile.description,
-//                                                modifier = Modifier.fillMaxWidth(),
-                                                softWrap = false,
-//                                                textAlign = TextAlign.End
                                             )
                                         }
                                     }

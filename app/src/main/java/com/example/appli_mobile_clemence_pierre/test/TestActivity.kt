@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
@@ -167,7 +166,7 @@ class TestActivity : ComponentActivity() {
                         Text(
                             modifier = Modifier.fillMaxWidth(),
                             text = hint,
-                            color = MaterialTheme.colors.onPrimary,
+                            color = Color.White,
                             fontWeight = FontWeight.Bold,
                             fontSize = 22.sp,
                             textAlign = TextAlign.Center
@@ -212,7 +211,7 @@ class TestActivity : ComponentActivity() {
                                         .swipeableCard(
                                             state = rememberSwipeableCardState(),
                                             onDrag = {
-                                                hint = "Offsetx = ${it.x}"
+//                                                hint = "Offsetx = ${it.x}"
                                                 if (it.x > 0) {
                                                     moneyHint = profile.modifier.moneyYes
                                                     popularityHint =
@@ -244,21 +243,24 @@ class TestActivity : ComponentActivity() {
                                                     }
                                                     profiles[0].image = bm
                                                 }
-                                                hint =
-                                                    if (it == Direction.Right) "YES" else "NO"
+//                                                hint =
+//                                                    if (it == Direction.Right) "YES" else "NO"
                                                 profile.swiped = true
                                                 money += moneyHint
+                                                if (money <= 0) hint = "PERDU"
                                                 money = money.coerceIn(0f, 1f)
                                                 popularity += popularityHint
+                                                if (popularity <= 0) hint = "PERDU"
                                                 popularity = popularity.coerceIn(0f, 1f)
                                                 mental += mentalHint
+                                                if (mental <= 0) hint = "PERDU"
                                                 mental = mental.coerceIn(0f, 1f)
                                                 moneyHint = 0f
                                                 popularityHint = 0f
                                                 mentalHint = 0f
                                             },
                                             onSwipeCancel = {
-                                                hint = "You canceled the swipe"
+//                                                hint = "You canceled the swipe"
                                                 moneyHint = 0f
                                                 popularityHint = 0f
                                                 mentalHint = 0f
