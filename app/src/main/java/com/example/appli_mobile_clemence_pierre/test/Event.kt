@@ -36,7 +36,6 @@ data class EventModifier(
 data class Event(
     var swiped: Boolean = false,
     val name: String,
-    val faceUrl: String,
     val description: String,
     val modifier: EventModifier,
     @DrawableRes var image: Bitmap?,

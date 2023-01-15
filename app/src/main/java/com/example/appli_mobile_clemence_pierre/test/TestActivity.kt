@@ -106,21 +106,18 @@ class TestActivity : ComponentActivity() {
     private val profiles = mutableStateListOf(
         Event(
             name = "Erlich Bachman",
-            faceUrl = "https://api.dicebear.com/5.x/avataaars/png?seed=ErlichBachman&backgroundColor=d1d4f9",
             description = "Vendre des calendriers associatifs",
             modifier = EventModifier(0.1f, 0f, 0.2f, -0.1f, 0.05f, -0.05f),
             image = null
         ),
         Event(
             name = "Richard Hendricks",
-            faceUrl = "https://api.dicebear.com/5.x/avataaars/png?seed=RichardHendricks&backgroundColor=d1d4f9",
             description = "Faire un stand au forum",
             modifier = EventModifier(-0.1f, 0.1f, 0f, 0.1f, 0.05f, -0.05f),
             image = null
         ),
         Event(
             name = "Laurie Bream",
-            faceUrl = "https://api.dicebear.com/5.x/avataaars/png?seed=LaurieBream&backgroundColor=d1d4f9",
             description = "Faire un prank aux listeux",
             modifier = EventModifier(0f, -0.2f, 0.2f, -0.2f, -0.1f, 0f),
             image = null
