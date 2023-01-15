@@ -230,7 +230,7 @@ class TestActivity : ComponentActivity() {
                                                     0,
                                                     baseProfiles
                                                         .random()
-                                                        .copy(swiped = false)
+                                                        .copy(swiped = false, name = names.random())
                                                 )
                                                 lifecycleScope.launch {
                                                     val bm: Bitmap? = withContext(Dispatchers.IO) {

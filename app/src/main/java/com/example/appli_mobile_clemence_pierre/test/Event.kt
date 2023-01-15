@@ -39,30 +39,114 @@ data class EventModifier(
 
 data class Event(
     var swiped: Boolean = false,
-    val name: String,
+    val name: String = names.random(),
     val description: String,
     val modifier: EventModifier,
-    @DrawableRes var image: Bitmap?,
+    @DrawableRes var image: Bitmap? = null,
+)
+
+// Parce que l'API pour générer des noms aléatoires ne marche plus
+val names = listOf(
+    "Erlich Bachman",
+    "Richard Hendricks",
+    "Laurie Bream",
+    "Burkett Rivard",
+    "Rémy Grivois",
+    "Frédéric Caron",
+    "Joseph Caisse",
+    "Agramant Lachapelle",
+    "Prewitt Lajeunesse",
+    "Merle Robillard",
+    "Octave Chartré",
+    "Didier Mercier",
+    "Brice Doyon",
+    "Audric de Brisay",
+    "Vernon Bazinet",
+    "Curtis Bergeron",
+    "Delmar Jacques",
+    "Curtis Paquet",
+    "Hugh Pitre",
+    "Léon Roussel"
 )
 
 val baseProfiles = listOf(
     Event(
-        name = "Erlich Bachman",
         description = "Vendre des calendriers associatifs",
         modifier = EventModifier(0.1f, 0f, 0.2f, -0.1f, 0.05f, -0.05f),
         image = null
     ),
     Event(
-        name = "Richard Hendricks",
         description = "Faire un stand au forum",
         modifier = EventModifier(-0.1f, 0.1f, 0f, 0.1f, 0.05f, -0.05f),
         image = null
     ),
     Event(
-        name = "Laurie Bream",
         description = "Faire un prank aux listeux",
         modifier = EventModifier(0f, -0.2f, 0.2f, -0.2f, -0.1f, 0f),
         image = null
+    ),
+    Event(
+        description = "Faire la soirée de Noël",
+        modifier = EventModifier(
+            -0.35f, 0.35f, -0.10f,
+            0.25f, -0.20f, -0.10f
+        ),
+    ),
+    Event(
+        description = "Faire une animation absinthe",
+        modifier = EventModifier(
+            -0.05f, 0.10f, -0.05f,
+            -0.05f, -0.10f, -0.05f
+        ),
+    ),
+    Event(
+        description = "Retarder la passation",
+        modifier = EventModifier(
+            0.00f, -0.30f, 0.25f,
+            0.00f, 0.00f, -0.10f
+        ),
+    ),
+    Event(
+        description = "Organiser un sondage pour savoir qui liste",
+        modifier = EventModifier(
+            0.00f, -0.10f, 0.05f,
+            0.00f, 0.00f, 0.05f
+        ),
+    ),
+    Event(
+        description = "Suivre RESET",
+        modifier = EventModifier(
+            -0.05f, 0.10f, -0.15f,
+            0.05f, 0.00f, 0.15f
+        ),
+    ),
+    Event(
+        description = "Créer un jeu pour faire la promo de ton asso",
+        modifier = EventModifier(
+            -0.05f, 0.15f, -0.20f,
+            0.00f, -0.10f, 0.05f
+        ),
+    ),
+    Event(
+        description = "Faire un partenariat Discord",
+        modifier = EventModifier(
+            0.30f, 0.10f, -0.10f,
+            0.00f, 0.00f, 0.10f
+        ),
+    ),
+    Event(
+        description = "Installer un chateau gonflable dans le local",
+        modifier = EventModifier(
+            -0.15f, 0.15f, 0.15f,
+            0.00f, -0.05f, -0.05f
+        ),
+    ),
+    Event(
+        description = "Augmenter la cotisation",
+        modifier = EventModifier(
+            0.25f, -0.30f, 0.00f,
+            0.00f, 0.10f, -0.10f
+        ),
     ),
 )
 
