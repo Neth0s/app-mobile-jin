@@ -1,5 +1,7 @@
 package com.example.appli_mobile_clemence_pierre.test
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,8 +25,14 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.lifecycleScope
 import com.example.appli_mobile_clemence_pierre.R
-import com.example.myapplication.AsyncBitmapDL
+import com.example.appli_mobile_clemence_pierre.avatar_api.Api
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.BufferedInputStream
+import java.io.InputStream
 import kotlin.math.abs
 
 class HalfSizeShape(private val widthPart: Float, private val offset: Float) : Shape {
@@ -119,10 +127,6 @@ class TestActivity : ComponentActivity() {
         ),
     )
 
-    //Downloading image
-    var abd: AsyncBitmapDL = AsyncBitmapDL(profiles[0])
-    abd.execute()
-
     private var money by mutableStateOf(0.5f)
     private var moneyHint by mutableStateOf(0f)
     private var popularity by mutableStateOf(0.5f)
@@ -133,8 +137,19 @@ class TestActivity : ComponentActivity() {
     private var hint by mutableStateOf("Swipe a card or press a button below")
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
+
+        lifecycleScope.launch {
+            profiles.forEach {
+                val bm: Bitmap? = withContext(Dispatchers.IO) {
+                    val a = Api.imageWebService.get_image(it.name)
+                    val inStream: InputStream = BufferedInputStream(a.byteStream())
+                    return@withContext BitmapFactory.decodeStream(inStream)
+                }
+                it.image = bm
+            }
+        }
+
         setContent {
             MaterialTheme {
                 Box(
@@ -198,17 +213,20 @@ class TestActivity : ComponentActivity() {
                                                 hint = "Offsetx = ${it.x}"
                                                 if (it.x > 0) {
                                                     moneyHint = profile.modifier.moneyYes
-                                                    popularityHint = profile.modifier.popularityYes
+                                                    popularityHint =
+                                                        profile.modifier.popularityYes
                                                     mentalHint = profile.modifier.mentalYes
                                                 } else {
                                                     moneyHint = profile.modifier.moneyNo
-                                                    popularityHint = profile.modifier.popularityNo
+                                                    popularityHint =
+                                                        profile.modifier.popularityNo
                                                     mentalHint = profile.modifier.mentalNo
                                                 }
                                             },
                                             onSwiped = {
                                                 profiles.add(0, profile.copy(swiped = false))
-                                                hint = if (it == Direction.Right) "YES" else "NO"
+                                                hint =
+                                                    if (it == Direction.Right) "YES" else "NO"
                                                 profile.swiped = true
                                                 money += moneyHint
                                                 money = money.coerceIn(0f, 1f)
