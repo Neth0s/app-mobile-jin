@@ -13,9 +13,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,6 +44,29 @@ data class Event(
     val modifier: EventModifier,
     @DrawableRes var image: Bitmap?,
 )
+
+val baseProfiles = listOf(
+    Event(
+        name = "Erlich Bachman",
+        description = "Vendre des calendriers associatifs",
+        modifier = EventModifier(0.1f, 0f, 0.2f, -0.1f, 0.05f, -0.05f),
+        image = null
+    ),
+    Event(
+        name = "Richard Hendricks",
+        description = "Faire un stand au forum",
+        modifier = EventModifier(-0.1f, 0.1f, 0f, 0.1f, 0.05f, -0.05f),
+        image = null
+    ),
+    Event(
+        name = "Laurie Bream",
+        description = "Faire un prank aux listeux",
+        modifier = EventModifier(0f, -0.2f, 0.2f, -0.2f, -0.1f, 0f),
+        image = null
+    ),
+)
+
+val profiles = (0..5).map { baseProfiles.random().copy(swiped = false) }.toMutableList()
 
 @Composable
 public fun ProfileCard(
@@ -70,7 +97,30 @@ public fun ProfileCard(
                     color = MaterialTheme.colors.onPrimary,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Medium,
-                    modifier = Modifier.padding(10.dp)
+                    style = TextStyle(
+                        shadow = Shadow(
+                            color = Color.White,
+                            offset = Offset.Zero,
+                            blurRadius = 5f
+                        )
+                    ),
+                    modifier = Modifier
+                        .padding(10.dp)
+                )
+                Text(
+                    text = event.description,
+                    color = MaterialTheme.colors.onPrimary,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium,
+                    style = TextStyle(
+                        shadow = Shadow(
+                            color = Color.White,
+                            offset = Offset.Zero,
+                            blurRadius = 5f
+                        )
+                    ),
+                    modifier = Modifier
+                        .padding(10.dp)
                 )
             }
         }

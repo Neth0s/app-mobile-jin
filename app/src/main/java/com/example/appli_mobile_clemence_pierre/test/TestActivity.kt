@@ -1,5 +1,6 @@
 package com.example.appli_mobile_clemence_pierre.test
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -8,8 +9,13 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,6 +24,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -28,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import com.example.appli_mobile_clemence_pierre.R
 import com.example.appli_mobile_clemence_pierre.avatar_api.Api
+import com.example.appli_mobile_clemence_pierre.test.ui.theme.ApplimobileclemencepierreTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -103,27 +111,6 @@ fun Filler(
 // From : https://github.com/alexstyl/compose-tinder-card
 class TestActivity : ComponentActivity() {
 
-    private val profiles = mutableStateListOf(
-        Event(
-            name = "Erlich Bachman",
-            description = "Vendre des calendriers associatifs",
-            modifier = EventModifier(0.1f, 0f, 0.2f, -0.1f, 0.05f, -0.05f),
-            image = null
-        ),
-        Event(
-            name = "Richard Hendricks",
-            description = "Faire un stand au forum",
-            modifier = EventModifier(-0.1f, 0.1f, 0f, 0.1f, 0.05f, -0.05f),
-            image = null
-        ),
-        Event(
-            name = "Laurie Bream",
-            description = "Faire un prank aux listeux",
-            modifier = EventModifier(0f, -0.2f, 0.2f, -0.2f, -0.1f, 0f),
-            image = null
-        ),
-    )
-
     private var money by mutableStateOf(0.5f)
     private var moneyHint by mutableStateOf(0f)
     private var popularity by mutableStateOf(0.5f)
@@ -148,12 +135,30 @@ class TestActivity : ComponentActivity() {
         }
 
         setContent {
-            MaterialTheme {
+            ApplimobileclemencepierreTheme {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(Color.Black)
                 ) {
+                    val mContext = LocalContext.current
+                    FloatingActionButton(
+                        onClick = {
+                            mContext.startActivity(
+                                Intent(
+                                    mContext,
+                                    ListActivity::class.java
+                                )
+                            )
+                        },
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(20.dp),
+                        shape = CircleShape,
+                        backgroundColor = Color.Red
+                    ) {
+                        Icon(Icons.Filled.List, "See list")
+                    }
                     Column(
                         Modifier
                             .padding(10.dp)
@@ -221,7 +226,24 @@ class TestActivity : ComponentActivity() {
                                                 }
                                             },
                                             onSwiped = {
-                                                profiles.add(0, profile.copy(swiped = false))
+                                                profiles.add(
+                                                    0,
+                                                    baseProfiles
+                                                        .random()
+                                                        .copy(swiped = false)
+                                                )
+                                                lifecycleScope.launch {
+                                                    val bm: Bitmap? = withContext(Dispatchers.IO) {
+                                                        val a =
+                                                            Api.imageWebService.get_image(profiles[0].name) // in avatar_api.Api
+                                                        val inStream: InputStream =
+                                                            BufferedInputStream(a.byteStream())
+                                                        return@withContext BitmapFactory.decodeStream(
+                                                            inStream
+                                                        )
+                                                    }
+                                                    profiles[0].image = bm
+                                                }
                                                 hint =
                                                     if (it == Direction.Right) "YES" else "NO"
                                                 profile.swiped = true
